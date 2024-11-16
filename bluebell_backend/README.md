@@ -1,57 +1,19 @@
 # bluebell 后端代码
 
-## docker 部署命令
-**dockerfile**
-```dockerfile
-FROM golang:alpine AS builder
+## 项目启动
 
-# 为我们的镜像设置必要的环境变量
-ENV GO111MODULE=on \
-GOPROXY=https://goproxy.cn,direct \
-CGO_ENABLED=0 \
-GOOS=linux \
-GOARCH=amd64
+- 需要有 Docker 与 docker-compose 环境
+- 在 `bluebell-backend`目录下执行命令，一键通过 `Dockerfile` 打包镜像并进行编排：
 
-# 移动到工作目录：/build
-WORKDIR /build
-
-# 复制项目中的 go.mod 和 go.sum文件并下载依赖信息
-COPY go.mod .
-COPY go.sum .
-RUN go mod download
-
-# 将代码复制到容器中
-COPY . .
-
-# 将我们的代码编译成二进制可执行文件 bubble_app
-RUN go build -o bluebell_app .
-
-###################
-# 接下来创建一个小镜像
-###################
-FROM debian:stretch-slim
-#FROM scratch
-
-COPY ./wait-for.sh /
-COPY ./templates /templates
-COPY ./static /static
-COPY ./conf /conf
-
-# 从builder镜像中把可执行文件拷贝到当前目录
-COPY --from=builder /build/bluebell_app /
-
-#RUN set -eux \
-#
-#    && apt-get update \
-#    && apt-get install -y --no-install-recommends netcat \
-#    && chmod 755 wait-for.sh
-
-# 声明服务端口
-EXPOSE 8081
-
-# 需要运行的命令
-ENTRYPOINT ["/bluebell_app", "conf/config.yaml"]
+```shell
+docker-compose up -d
 ```
+- 宿主机访问 http://localhost:8081 查看项目
+- 宿主机访问 http://localhost:8081/swagger/index.html 查看接口文档
+
+
+## docker 部署命令
+
 **构建镜像**
 > docker build -t bluebell_app .
 
@@ -60,3 +22,5 @@ ENTRYPOINT ["/bluebell_app", "conf/config.yaml"]
 
 **查看容器日志**
 > docker logs -f bluebell_app
+
+

@@ -8,15 +8,16 @@ import (
 	"bluebell_backend/pkg/snowflake"
 	"bluebell_backend/routers"
 	"bluebell_backend/settings"
+	"flag"
 	"fmt"
 )
 
-//@host 127.0.0.1:8081
-//@BasePath /api/v1/
+// @host 127.0.0.1:8081
+// @BasePath /api/v1/
 func main() {
-	//var confFile string
-	//flag.StringVar(&confFile, "conf", "./conf/config.yaml", "配置文件")
-	//flag.Parse()
+	var confFile string
+	flag.StringVar(&confFile, "conf", "./conf/config.yaml", "配置文件")
+	flag.Parse()
 	// 加载配置
 	if err := settings.Init(); err != nil {
 		fmt.Printf("load config failed, err:%v\n", err)
